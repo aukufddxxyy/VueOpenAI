@@ -7,12 +7,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useWindowSize, useEventListener } from '@vueuse/core';
 import useMouseDelta from '@/hooks/useMouseDelta';
 import ColorCard from './ColorCard.vue';
 
 defineProps<{ msg: string }>()
+
+const state = reactive({
+  positions: []
+})
 
 const { width, height } = useWindowSize()
 const { deltaX, deltaY } = useMouseDelta()
