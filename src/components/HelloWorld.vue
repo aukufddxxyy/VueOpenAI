@@ -9,28 +9,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useWindowSize, useEventListener } from '@vueuse/core';
+import useMouseDelta from '@/hooks/useMouseDelta';
 import ColorCard from './ColorCard.vue';
 
 defineProps<{ msg: string }>()
 
-const moving = ref<boolean>(false)
-const initPos = ref<{ x: number, y: number }>({ x: 0, y: 0 })
-const rotate = ref<number>(0)
-
 const { width, height } = useWindowSize()
-console.log(Math.ceil(height.value));
-
-
-
-useEventListener(document, 'mousedown', (e) => {
-  moving.value = true
-  initPos.value = { x: e.clientX, y: e.clientY }
-})
-useEventListener(document, 'mouseup', () => moving.value = false)
-useEventListener(document, 'mousemove', (e) => {
-  if (!moving.value) return;
-  rotate.value = e.clientX - initPos.value.x
-})
+const { deltaX, deltaY } = useMouseDelta()
 
 
 const color = ['#f07c82', '#74759b']
@@ -38,25 +23,26 @@ const colorNum = 26
 const radius = 800
 const speed = 0.05
 const oPoint = {
-  x: width.value / 2,
+  x: width.value / 2 - 110,
   y: height.value
 }
 
 const colors = Array.from({ length: colorNum }, (v, i) => color[i % 2])
 
 const calcStyle = (idx: number): string => {
-  const angle = 360 / colorNum * idx + (rotate.value) * speed
-  const backgroudColor = `background-color: ${colors[idx]}`
-  const cardRotate = `rotate(${angle}deg)`
-
+  const angle = (360 / colorNum * idx + (deltaX.value) * speed) % 360
   const x = oPoint.x + Math.sin(Math.PI * angle / 180) * radius
   const y = oPoint.y - Math.cos(Math.PI * angle / 180) * radius
+
   const translate3d = `translate3d(${x}px, ${y}px, 0px)`
-  const zIndex = `z-index: ${Math.ceil(height.value) - Math.ceil(y)}`
-  // const scale = `scale(${(oPoint.y+radius - (radius - Math.cos(Math.PI * angle / 180) * radius)) / (oPoint.y+radius)})`
+  const cardRotate = `rotate(${angle}deg)`
   const scale = `scale(${Math.log(10 + 10 * (radius + Math.cos(Math.PI * angle / 180) * radius) / (2 * radius)) / Math.log(10)})`
-  // const scale = `scale(1)`
-  return `transform:${translate3d} ${cardRotate} ${scale}; ${backgroudColor}; ${zIndex}`
+
+  const transform = `transform:${translate3d} ${cardRotate} ${scale}`
+  const backgroudColor = `background-color: ${colors[idx]}`
+  const zIndex = `z-index: ${Math.ceil(height.value) - Math.ceil(y)}`
+  
+  return `${transform}; ${backgroudColor}; ${zIndex}`
 }
 
 </script>
