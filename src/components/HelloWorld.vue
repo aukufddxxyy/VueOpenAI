@@ -39,7 +39,7 @@ const radius = 800
 const speed = 0.05
 const oPoint = {
   x: width.value / 2,
-  y: 900
+  y: height.value
 }
 
 const colors = Array.from({ length: colorNum }, (v, i) => color[i % 2])
@@ -54,7 +54,7 @@ const calcStyle = (idx: number): string => {
   const translate3d = `translate3d(${x}px, ${y}px, 0px)`
   const zIndex = `z-index: ${Math.ceil(height.value) - Math.ceil(y)}`
   // const scale = `scale(${(oPoint.y+radius - (radius - Math.cos(Math.PI * angle / 180) * radius)) / (oPoint.y+radius)})`
-  const scale = `scale(${Math.log(1 + 10 * (radius + Math.cos(Math.PI * angle / 180) * radius) / (2 * radius)) / Math.log(10)})`
+  const scale = `scale(${Math.log(10 + 10 * (radius + Math.cos(Math.PI * angle / 180) * radius) / (2 * radius)) / Math.log(10)})`
   // const scale = `scale(1)`
   return `transform:${translate3d} ${cardRotate} ${scale}; ${backgroudColor}; ${zIndex}`
 }

@@ -1,11 +1,18 @@
 <template>
-  <div id="container">
+  <div id="container" :style="containerStyle">
     <HelloWorld msg="Vite + Vue" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue'
+import { useWindowSize } from '@vueuse/core';
+
+const {width, height} = useWindowSize()
+
+const containerStyle = computed(() => `width: ${width.value}px; height: ${height.value}px; `)
+
 </script>
 
 <style lang="scss" scoped>
@@ -30,9 +37,6 @@ import HelloWorld from '@/components/HelloWorld.vue'
   height: 100%;
   position: relative;
   transform-origin: 0 0;
-
-  width: 2503px;
-  height: 808px;
   transform: translate(0px, 0px) scale(1.04292);
 }
 </style>
