@@ -8,14 +8,14 @@
 import { computed } from 'vue';
 
 
-type Props = {
-    backgroudColor: string
-    cardId: number
-}
+// type Props = {
+//     backgroudColor: string
+//     cardId: number
+// }
 
-const props = withDefaults(defineProps<Props>(), {
-    backgroudColor: '#f07c82'
-})
+// const props = withDefaults(defineProps<Props>(), {
+//     backgroudColor: '#f07c82'
+// })
 
 </script>
 
