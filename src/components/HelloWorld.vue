@@ -15,14 +15,11 @@ const color = ['#f07c82', '#74759b']
 const colorNum = 26
 const radius = 500
 const speed = 0.05
+const acceleration = 0.01
+let interval: number
 
-// 触发惯性滑动条件:
-// 在手指离开屏幕时，如果和上一次 move 时的间隔小于 `MOMENTUM_TIME` 且 move
-// 距离大于 `MOMENTUM_DISTANCE` 时，执行惯性滑动
 const INERTIA_TIME = 1000
 const INERTIA_DISTANCE = 15
-
-// let interval: number = 0
 
 const cards = ref<number[]>(Array.from({ length: colorNum }, (_, i) => 360 / colorNum * i))
 const moveTime = ref<number>(0)
@@ -44,42 +41,35 @@ const calcStyle = (idx: number): string => {
   const cardRotate = `rotate(${angle}deg)`
   const scale = `scale(${Math.log(10 + 10 * (radius + Math.cos(Math.PI * angle / 180) * radius) / (2 * radius)) / Math.log(10)})`
 
-  const transition = `transition: all ${moveTime.value}ms cubic-bezier(0.17, 0.89, 0.45, 1)`
   const transform = `transform:${translate3d} ${cardRotate} ${scale}`
   const backgroudColor = `background-color: ${color[idx % 2]}`
   const zIndex = `z-index: ${Math.ceil(height.value) - Math.ceil(y)}`
 
-  return `${transition}; ${transform}; ${backgroudColor}; ${zIndex}`
+  return `${transform}; ${backgroudColor}; ${zIndex}`
 }
 
-const momentum = (): number => {
-  // 惯性滚动的速度
-  const inertia_speed = Math.abs(deltaX.value / deltaT.value)
-  // 惯性滚动的距离
-  let nDistance = (inertia_speed / 0.01) * (deltaX.value < 0 ? -1 : 1)
-  return nDistance
-}
+const setMove = () => {
+  let velocity = deltaX.value * 0.5 / deltaT.value
 
-const setMove = (distance: number) => {
-  // let dX = distance / deltaT.value
-  // let interval = setInterval(
-  //   () => cards.value.forEach((_, idx) => cards.value[idx] = (cards.value[idx] + dX)),
-  //   1
-  // )
-  // setTimeout(() => { moveTime.value = deltaT.value * 20; clearInterval(interval) }, deltaT.value * 2)
-  moveTime.value = deltaT.value * 10
-  cards.value.forEach((_, idx) => cards.value[idx] = (cards.value[idx] + distance))
+  interval = setInterval(
+    () => {
+      velocity = Math.abs(velocity - acceleration) > 0 ? velocity - (velocity / Math.abs(velocity)) * acceleration : 0;
+      cards.value.forEach((_, idx) => cards.value[idx] = (cards.value[idx] + velocity))
+      if (velocity == 0) clearInterval(interval)
+    },
+    1
+  )
 }
 
 const onMoveEnd = () => {
   cards.value.forEach((_, idx) => cards.value[idx] = (cards.value[idx] + deltaX.value * speed))
   if (deltaT.value <= INERTIA_TIME && Math.abs(deltaX.value) > INERTIA_DISTANCE) {
-    const distance = momentum()
-    setMove(distance)
+    setMove()
   }
 }
 
 const onMoveStart = () => {
+  clearInterval(interval)
   moveTime.value = 0
 }
 
