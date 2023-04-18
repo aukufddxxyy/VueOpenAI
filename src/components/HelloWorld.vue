@@ -15,7 +15,7 @@ const color = ['#f07c82', '#74759b']
 const colorNum = 26
 const radius = 500
 const speed = 0.05
-const acceleration = 0.01
+const acceleration = 0.005
 let interval: number
 
 const INERTIA_TIME = 1000
@@ -55,7 +55,7 @@ const setMove = () => {
     () => {
       velocity = Math.abs(velocity - acceleration) > 0 ? velocity - (velocity / Math.abs(velocity)) * acceleration : 0;
       cards.value.forEach((_, idx) => cards.value[idx] = (cards.value[idx] + velocity))
-      if (velocity == 0) clearInterval(interval)
+      if (velocity < 0.0005) clearInterval(interval)
     },
     1
   )
