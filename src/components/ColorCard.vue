@@ -20,8 +20,6 @@ import { computed } from 'vue';
 </script>
 
 <style lang="scss" scoped>
-.color-card {
-    width: 220px;
-    height: 310px;
-}
+
+
 </style>
