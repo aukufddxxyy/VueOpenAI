@@ -1,12 +1,9 @@
 <template>
-    <div class="color-card">
-
-    </div>
+  <div class="color-card" />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
+import { computed } from "vue";
 
 // type Props = {
 //     backgroudColor: string
@@ -16,12 +13,11 @@ import { computed } from 'vue';
 // const props = withDefaults(defineProps<Props>(), {
 //     backgroudColor: '#f07c82'
 // })
-
 </script>
 
 <style lang="scss" scoped>
 .color-card {
-    width: 220px;
-    height: 310px;
+  width: 220px;
+  height: 310px;
 }
 </style>
