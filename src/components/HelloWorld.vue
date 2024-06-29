@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="pantone"
-    class="chand show-pantone"
-  >
+  <div id="pantone" class="chand show-pantone">
     <color-card
       v-for="(angle, idx) in card_angles"
       :id="`items${idx}`"
@@ -20,35 +17,47 @@ import useMouseDelta from "@/hooks/useMouseDelta";
 import ColorCard from "./ColorCard.vue";
 import { speed, CARD_GROUP_CTX_KEY } from "./constants";
 
-const colorNum = 26;
+const colorNum = 10;
 const acceleration = 0.05;
 
 const INERTIA_TIME = 1000;
 const INERTIA_DISTANCE = 15;
 
-const card_angles = ref<number[]>(Array.from({ length: colorNum }, (_, i) => (360 / colorNum) * i));
+const card_angles = ref<number[]>(
+  Array.from({ length: colorNum }, (_, i) => (360 / colorNum) * i)
+);
 const moveTime = ref<number>(0);
 const isMoving = ref<boolean>(false);
 const samples = ref<{ position: number; time: number }[]>([]);
+const velocity = ref<number>(0);
 
 const { width, height } = useWindowSize();
 
 const setInertialMotion = () => {
   const begin = samples.value[0];
   const end = samples.value[samples.value.length - 1];
-  let velocity = (end.position - begin.position) / (end.time - begin.time);
-  const direction = velocity >= 0 ? 1 : -1;
+  velocity.value = (end.position - begin.position) / (end.time - begin.time);
+
+  const direction = velocity.value >= 0 ? 1 : -1;
 
   const move = () => {
-    velocity = Math.abs(velocity) - acceleration > 0 ? velocity - direction * acceleration : 0;
-    card_angles.value.forEach((_, idx) => (card_angles.value[idx] = card_angles.value[idx] + velocity));
+    velocity.value =
+      Math.abs(velocity.value) - acceleration > 0
+        ? velocity.value - direction * acceleration
+        : 0;
+
+    card_angles.value.forEach(
+      (_, idx) =>
+        (card_angles.value[idx] = card_angles.value[idx] + velocity.value)
+    );
     requestAnimationFrame(() => {
-      if (Math.abs(velocity) > 0.0005) {
+      if (Math.abs(velocity.value) > 0.0005) {
         move();
       } else {
         isMoving.value = false;
         moveTime.value = 0;
         samples.value = [];
+        velocity.value = 0;
       }
     });
   };
@@ -56,9 +65,15 @@ const setInertialMotion = () => {
 };
 
 const onMoveEnd = () => {
-  card_angles.value.forEach((_, idx) => (card_angles.value[idx] = card_angles.value[idx] + deltaX.value * speed));
+  card_angles.value.forEach(
+    (_, idx) =>
+      (card_angles.value[idx] = card_angles.value[idx] + deltaX.value * speed)
+  );
   isMoving.value = false;
-  if (deltaT.value <= INERTIA_TIME && Math.abs(deltaX.value) > INERTIA_DISTANCE) {
+  if (
+    deltaT.value <= INERTIA_TIME &&
+    Math.abs(deltaX.value) > INERTIA_DISTANCE
+  ) {
     setInertialMotion();
   }
 };
@@ -86,6 +101,7 @@ provide(
     deltaX,
     height,
     width,
+    velocity,
   })
 );
 </script>

@@ -5,6 +5,7 @@ interface CardGroupContext {
   deltaX: number;
   height: number;
   width: number;
+  velocity: number;
 }
 
 export const color = ["#f07c82", "#74759b"] as const;

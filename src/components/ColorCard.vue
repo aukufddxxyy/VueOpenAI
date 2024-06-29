@@ -28,12 +28,21 @@ const oPoint = {
 const backgroundColor = computed(() => color[props.num % 2]);
 const transform = computed(() => {
   const angle = ctx?.isMoving ? props.angle + ctx?.deltaX * speed : props.angle;
-  const x = oPoint.x + Math.sin((Math.PI * angle) / 180) * radius;
-  const y = oPoint.y - Math.cos((Math.PI * angle) / 180) * radius;
+  const deltaR = Math.sqrt(900 * Math.abs(ctx?.velocity || 0));
+  const x = oPoint.x + Math.sin((Math.PI * angle) / 180) * (radius + deltaR);
+  const y = oPoint.y - Math.cos((Math.PI * angle) / 180) * (radius + deltaR);
 
-  const translate3d = `translate3d(${x}px, ${y}px, ${Math.ceil(ctx?.height || 0) - Math.ceil(y)}px)`;
+  const translate3d = `translate3d(${x}px, ${y}px, ${
+    Math.ceil(ctx?.height || 0) - Math.ceil(y)
+  }px)`;
   const cardRotate = `rotate(${angle}deg)`;
-  const scale = `scale(${Math.log(10 + (10 * (radius + Math.cos((Math.PI * angle) / 180) * radius)) / (2 * radius)) / Math.log(10)})`;
+  const scale = `scale(${
+    Math.log(
+      10 +
+        (10 * (radius + Math.cos((Math.PI * angle) / 180) * radius)) /
+          (2 * radius)
+    ) / Math.log(10)
+  })`;
 
   return `${translate3d} ${cardRotate} ${scale}`;
 });
